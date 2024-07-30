@@ -16,6 +16,13 @@ procedure crawlerThread (frontier, num_targets)
     end while
 end procedure
 
+keeps track of targets
+checks if all urls have been visited .done()
+gets next url from rq
+calls parser on url 
+stores url and html into db 
+target_page(html)
+
 
 main:
     frontier = crawler()
