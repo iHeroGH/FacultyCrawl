@@ -1,39 +1,24 @@
 import crawler
+import frontier
 
-class Frontier: #the request queue object
-    def __init__(self):
-        self.request_queue = []
+'''
+What still needs to be done:
+- scrape data from faculty websites and store/index into database
+- allow for user queury 
+- see if crawler works for business seed url
 
-    def done(self):
-        return len(self.request_queue) < 1
-
-    def nextURL(self):
-        next=self.request_queue[0]
-        del self.request_queue[0]
-        return next
-
-    def addURL(self,url):
-        #print("addURL: ",url)
-        self.request_queue.append(url)
-
-    def clear(self):
-        self.request_queue.clear()
- 
-    def getQueue(self):
-        return self.request_queue
-        
-
-
+'''
 
 
 
 def main():
-    SEED ='https://www.cpp.edu/sci/biological-sciences/index.shtml'
-    num_targets = 10
-    frontier = Frontier()
-    frontier.addURL(SEED)
-    crawler.crawl(frontier,num_targets)
+    #SEED ='https://www.cpp.edu/sci/biological-sciences/index.shtml'
+    SEED = 'https://www.cpp.edu/engineering/ce/index.shtml'
 
+    num_targets = 10
+    request_queue = frontier.Frontier()
+    request_queue.addURL(SEED)
+    crawler.crawl(request_queue,num_targets)
 
 
 if __name__ == '__main__':
