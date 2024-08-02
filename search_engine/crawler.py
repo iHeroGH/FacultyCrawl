@@ -1,8 +1,7 @@
 from urllib.error import HTTPError
 
-import search_engine.parser as parser
-
 from .frontier import Frontier
+from .parser import is_target, parse, retrieve_url
 
 
 def crawl(frontier: Frontier, num_targets: int):
@@ -25,17 +24,17 @@ def crawl(frontier: Frontier, num_targets: int):
         try:
             url = frontier.next_url()
             links_visited.add(url)
-            html = parser.retrieve_url(url)
+            html = retrieve_url(url)
 
             # ----insert store_page() here----
 
-            if parser.is_target(html):
+            if is_target(html):
                 targets_found += 1
 
             if targets_found == num_targets:
                 frontier.clear()
             else:
-                urls = parser.parse(html)
+                urls = parse(html)
                 for url in urls:
                     if url in links_visited:
                         continue

@@ -1,4 +1,4 @@
-from search_engine import crawler
+from search_engine.crawler import crawl
 from search_engine.frontier import Frontier
 
 """
@@ -44,7 +44,7 @@ def main():
     frontier = Frontier()
     frontier.add_url(seed)
 
-    crawler.crawl(frontier, num_targets)
+    crawl(frontier, num_targets)
 
 
 if __name__ == '__main__':
