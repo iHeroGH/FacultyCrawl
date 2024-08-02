@@ -4,15 +4,23 @@ from pymongo.database import Database
 
 
 class DBCon:
+    """Maintains a static connection to the MongoDB database"""
 
-    CLIENT = None
-    DB = None
+    # The MongoDB Client
+    CLIENT: MongoClient | None = None
+    # The MongoDB Database
+    DB: Database | None = None
 
+    # The connection info for the database
     DB_NAME = "faculty_crawl"
     DB_HOST = "localhost"
     DB_PORT = 27017
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """
+        Technically, instance objects should not be made of DBCon,
+        but go off I guess
+        """
         DBCon._connect()
 
     @staticmethod
