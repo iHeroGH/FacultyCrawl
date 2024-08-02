@@ -13,7 +13,7 @@ def main():
     ###########################################################################
     # Simply change this variable!
     # Either bio, civ, or bus
-    DEPARTMENT = "bus"
+    DEPARTMENT = "bio"
     ###########################################################################
 
     # The base CPP URL
@@ -34,6 +34,7 @@ def main():
     }
 
     seed, num_targets, total_targets = DEPARTMENTS[DEPARTMENT]
+    assert num_targets <= total_targets
 
     print(
         f"Attempting to find {num_targets}/{total_targets} targets from " +

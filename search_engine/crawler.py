@@ -29,6 +29,7 @@ def crawl(frontier: Frontier, num_targets: int):
 
             if is_target(html):
                 targets_found += 1
+                print(f"Target found ({targets_found}/{num_targets}).")
 
             if targets_found == num_targets:
                 frontier.clear()

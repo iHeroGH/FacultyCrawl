@@ -46,7 +46,8 @@ def is_target(html: BeautifulSoup) -> bool:
     faculty = html.find('div', {'class': "fac-info"})
 
     if faculty:
-        print(faculty.get_text().strip("\n"))
+        pass
+        # print(faculty.get_text().strip("\n"))
 
     return faculty is not None
 
