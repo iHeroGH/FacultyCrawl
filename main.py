@@ -3,10 +3,8 @@ from search_engine.frontier import Frontier
 
 """
 What still needs to be done:
-- scrape data from faculty websites and store/index into database
+- parse/index faculty data
 - allow for user queury
-- see if crawler works for business seed url
-- parse faculty data
 """
 
 
