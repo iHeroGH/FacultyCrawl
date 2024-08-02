@@ -81,3 +81,19 @@ def parse(html: BeautifulSoup):
             urls.append(new_url)
 
     return urls
+
+def faculty_data(html):
+
+    doc_text = []
+
+    left_column = html.find_all('div',{'class':'col'})  # left side of area of search
+    right_column = html.find_all('div',{'class':'accolades'})   # right side of area of search
+
+    for elem in left_column:
+        doc_text.append(str(re.sub(r"[\xa0\n\t]", " ", elem.text))) 
+    for elem in right_column:
+       doc_text.append(str(re.sub(r"[\xa0\n\t]", " ", elem.text)))
+    
+    print([text for text in doc_text])
+
+    return doc_text
