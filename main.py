@@ -6,6 +6,7 @@ What still needs to be done:
 - scrape data from faculty websites and store/index into database
 - allow for user queury
 - see if crawler works for business seed url
+- parse faculty data
 """
 
 
@@ -14,7 +15,7 @@ def main():
     ###########################################################################
     # Simply change this variable!
     # Either bio, civ, or bus
-    DEPARTMENT = "bio"
+    DEPARTMENT = "bus"
     ###########################################################################
 
     # The base CPP URL

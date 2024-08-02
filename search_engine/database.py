@@ -1,10 +1,6 @@
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from pymongo.database import Database
+from pymongo.database import Database
 
 
 class DBCon:
@@ -34,10 +30,10 @@ class DBCon:
                 "Something went wrong maintaining both a Client and a DB"
             )
 
-        if not DBCon.CLIENT:
+        if DBCon.CLIENT is None:
             DBCon._connect()
 
-        assert bool(DBCon.CLIENT)
+        assert DBCon.CLIENT is not None
         return DBCon.CLIENT
 
     @staticmethod
@@ -55,10 +51,10 @@ class DBCon:
                 "Something went wrong maintaining both a Client and a DB"
             )
 
-        if not DBCon.DB:
+        if DBCon.DB is None:
             DBCon._connect()
 
-        assert bool(DBCon.DB)
+        assert DBCon.DB is not None
         return DBCon.DB
 
     @staticmethod
@@ -82,14 +78,14 @@ class DBCon:
                 "Something went wrong maintaining both a Client and a DB"
             )
 
-        if DBCon.DB:
+        if DBCon.DB is not None:
             return DBCon.DB
 
         try:
-            CLIENT = MongoClient(host=DBCon.DB_NAME, port=DBCon.DB_PORT)
-            DB = CLIENT[DBCon.DB_NAME]
+            DBCon.CLIENT = MongoClient(host=DBCon.DB_HOST, port=DBCon.DB_PORT)
+            DBCon.DB = DBCon.CLIENT[DBCon.DB_NAME]
 
-            return DB
+            return DBCon.DB
         except Exception as e:
             raise RuntimeError(f"DB not connected successfully {e}.")
 
@@ -104,7 +100,7 @@ class DBCon:
         bool
             Whether or not this connection is safe
         """
-        return not (bool(DBCon.CLIENT) ^ bool(DBCon.DB))
+        return not ((DBCon.CLIENT is not None) ^ (DBCon.DB is not None))
 
 
 def store_page(url: str, html: BeautifulSoup) -> None:
@@ -118,4 +114,10 @@ def store_page(url: str, html: BeautifulSoup) -> None:
     html : BeautifulSoup
         The HTML content of the page
     """
-    print(DBCon.get_db())
+    db = DBCon.get_db()
+    pages = db.pages
+
+    pages.insert_one({
+        "url": url,
+        "html": html.decode()
+    })

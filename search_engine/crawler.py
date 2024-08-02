@@ -1,5 +1,3 @@
-from urllib.error import HTTPError
-
 from .frontier import Frontier
 from .parser import is_target, parse, retrieve_url
 from .database import store_page
@@ -34,6 +32,8 @@ def crawl(frontier: Frontier, num_targets: int):
 
             if targets_found == num_targets:
                 frontier.clear()
+                print(f"{num_targets} targets found.")
+
             else:
                 urls = parse(html)
                 for url in urls:
@@ -44,7 +44,5 @@ def crawl(frontier: Frontier, num_targets: int):
 
                     frontier.add_url(url)
 
-        except HTTPError as e:
-            print({e})
         except Exception as e:
-            print({e})
+            print(f"Skipping page: {e}")
