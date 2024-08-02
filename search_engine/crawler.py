@@ -2,6 +2,7 @@ from urllib.error import HTTPError
 
 from .frontier import Frontier
 from .parser import is_target, parse, retrieve_url
+from .database import store_page
 
 
 def crawl(frontier: Frontier, num_targets: int):
@@ -26,7 +27,7 @@ def crawl(frontier: Frontier, num_targets: int):
             links_visited.add(url)
             html = retrieve_url(url)
 
-            # ----insert store_page() here----
+            store_page(url, html)
 
             if is_target(html):
                 targets_found += 1
