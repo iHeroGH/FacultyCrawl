@@ -1,5 +1,5 @@
 from .frontier import Frontier
-from .parser import is_target, parse, retrieve_url
+from .parser import is_target, parse, retrieve_url, faculty_data
 from .database import store_page
 
 
@@ -30,6 +30,7 @@ def crawl(frontier: Frontier, num_targets: int):
             if is_target(html):
                 targets_found += 1
                 print(f"Target found ({targets_found}/{num_targets}).")
+                faculty_data(html)
 
             if targets_found == num_targets:
                 frontier.clear()
