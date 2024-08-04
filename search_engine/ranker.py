@@ -4,8 +4,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .database import DBCon
-from .parser import preprocess_text
 from .indexer import get_grams
+from .parser import preprocess_text
 
 
 def rank(query: str, n_grams: int) -> list[tuple[str, float]]:

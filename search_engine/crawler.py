@@ -1,6 +1,6 @@
 from .database import DBCon
 from .frontier import Frontier
-from .parser import is_target, parse_html, fetch_html
+from .parser import fetch_html, is_target, parse_html
 
 
 def crawl(frontier: Frontier, num_targets: int):

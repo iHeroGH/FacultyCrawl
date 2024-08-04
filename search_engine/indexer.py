@@ -55,5 +55,28 @@ def index_faculty_content(num_targets: int, n_gram: int = 3) -> None:
 
 
 def get_grams(tokens: list[str], gram: int = 1) -> list[str]:
+    """
+    Retrieves n-grams for a given list of tokens
+
+    Example: ["cats", "love", "dogs"]
+    1-gram: ["cats", "love", "dogs"]
+    2-gram: ["cats love", "love dogs"]
+    3-gram: ["cats love dogs"]
+
+    You'll need a for-loop to get a range of n-grams if that's the goal
+
+    Parameters
+    ----------
+    tokens : list[str]
+        The initial list of tokens
+    gram : int, default=1
+        The number of grams to create. The default value, 1, will essentially
+        return the same list given
+
+    Returns
+    -------
+    list[str]
+        The grams generated
+    """
     grams = zip(*[tokens[i:] for i in range(gram)])
     return [' '.join(ngram) for ngram in grams]

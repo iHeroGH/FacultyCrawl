@@ -5,6 +5,10 @@ from search_engine.ranker import query_user
 
 
 def main():
+    """
+    Drives the main functionality of the program, crawling, indexing, and
+    querying
+    """
 
     ###########################################################################
     # Simply change these variables!
