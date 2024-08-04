@@ -111,7 +111,7 @@ class DBCon:
         return not ((DBCon.CLIENT is not None) ^ (DBCon.DB is not None))
 
 
-def store_page(url: str, html: BeautifulSoup) -> None:
+def store_page(url: str, html: BeautifulSoup, is_target: bool = False) -> None:
     """
     Stores the entirety of the HTML associated with a URL in a MongoDB
 
@@ -121,11 +121,42 @@ def store_page(url: str, html: BeautifulSoup) -> None:
         The URL of the page given
     html : BeautifulSoup
         The HTML content of the page
+    is_target : bool, default=False
+        Whether or not this is a page belonging to a target (a faculty member)
     """
     db = DBCon.get_db()
     pages = db.pages
 
     pages.insert_one({
         "url": url,
-        "html": html.decode()
+        "html": html.decode(),
+        "is_target": is_target
+    })
+
+
+def store_inverted_index(term: str, doc_list: list[str]) -> None:
+    """
+    Stores the inverted index associated with a given term. Essentially,
+    we store a list of documents in which the term occurs.
+
+    We end up with the following schema:
+    {
+        str: list[str],
+        cat: [url1, url2, url3],
+        ...
+    }
+
+    Parameters
+    ----------
+    term : str
+        The term whose indices we are storing
+    doc_list : list[str]
+        The list of document URLs in which this term occurs
+    """
+    db = DBCon.get_db()
+    faculty = db.faculty
+
+    faculty.insert_one({
+        "term": term,
+        "doc_list": doc_list
     })

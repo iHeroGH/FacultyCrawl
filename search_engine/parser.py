@@ -56,10 +56,6 @@ def is_target(html: BeautifulSoup) -> bool:
     """
     faculty = html.find('div', {'class': "fac-info"})
 
-    if faculty:
-        pass
-        # print(faculty.get_text().strip("\n"))
-
     return faculty is not None
 
 
@@ -155,7 +151,5 @@ def faculty_data(html: BeautifulSoup) -> list[str]:
         text = re.sub(r"[\xa0\n\t]", " ", elem.text)
         preprocessed_text = preprocess_text(text)
         doc_text.append(preprocessed_text)
-
-    print([text for text in doc_text])
 
     return doc_text
