@@ -93,7 +93,6 @@ def parse(html: BeautifulSoup):
 
     return urls
 
-
 def preprocess_text(text: str) -> str:
     """
     Preprocesses the text by performing stopword removal and lemmatization.
