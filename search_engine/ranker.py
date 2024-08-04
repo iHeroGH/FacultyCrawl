@@ -5,6 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from .database import DBCon
 from .parser import preprocess_text
+from .indexer import get_grams
 
 
 def rank(query: str, n_grams: int) -> list[tuple[str, float]]:
@@ -25,7 +26,13 @@ def rank(query: str, n_grams: int) -> list[tuple[str, float]]:
     list[tuple[str, float]]
         The ordered list of URLs and their cosine similarities
     """
-    query_terms = preprocess_text(query)
+    prelim_terms = preprocess_text(query)
+
+    # Query terms will consist of the terms, and any additioanl grams
+    query_terms = []
+    for curr_gram in range(1, n_grams + 1):
+        terms = get_grams(prelim_terms, curr_gram)
+        query_terms += terms
 
     # Add every document found for every term in the query
     urls = set()
