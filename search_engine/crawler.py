@@ -1,6 +1,6 @@
-from .database import store_page
+from .database import DBCon
 from .frontier import Frontier
-from .parser import is_target, parse, retrieve_url
+from .parser import is_target, parse_html, retrieve_html
 
 
 def crawl(frontier: Frontier, num_targets: int):
@@ -23,21 +23,20 @@ def crawl(frontier: Frontier, num_targets: int):
         try:
             url = frontier.next_url()
             links_visited.add(url)
-            html = retrieve_url(url)
+            html = retrieve_html(url)
 
             if (target := is_target(html)):
                 targets_found += 1
                 print(f"Target found ({targets_found}/{num_targets}).")
-                # faculty_data(html)
 
-            store_page(url, html, target)
+            DBCon.store_page(url, html, target)
 
             if targets_found == num_targets:
                 frontier.clear()
                 print(f"{num_targets} targets found.")
 
             else:
-                urls = parse(html)
+                urls = parse_html(html)
                 for url in urls:
                     if url in links_visited:
                         continue

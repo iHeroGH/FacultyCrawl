@@ -1,6 +1,15 @@
+from typing import TypedDict
+
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
+from pymongo.cursor import Cursor
 from pymongo.database import Database
+
+
+class Page(TypedDict):
+    url: str
+    html: str
+    is_target: bool
 
 
 class DBCon:
@@ -110,53 +119,78 @@ class DBCon:
         """
         return not ((DBCon.CLIENT is not None) ^ (DBCon.DB is not None))
 
+    @staticmethod
+    def store_page(
+                url: str,
+                html: BeautifulSoup,
+                is_target: bool = False
+            ) -> None:
+        """
+        Stores the entirety of the HTML associated with a URL in a MongoDB
 
-def store_page(url: str, html: BeautifulSoup, is_target: bool = False) -> None:
-    """
-    Stores the entirety of the HTML associated with a URL in a MongoDB
+        Parameters
+        ----------
+        url : str
+            The URL of the page given
+        html : BeautifulSoup
+            The HTML content of the page
+        is_target : bool, default=False
+            Whether or not this is a page belonging to a target
+            (a faculty member)
+        """
+        db = DBCon.get_db()
+        pages = db.pages
 
-    Parameters
-    ----------
-    url : str
-        The URL of the page given
-    html : BeautifulSoup
-        The HTML content of the page
-    is_target : bool, default=False
-        Whether or not this is a page belonging to a target (a faculty member)
-    """
-    db = DBCon.get_db()
-    pages = db.pages
+        pages.insert_one({
+            "url": url,
+            "html": html.decode(),
+            "is_target": is_target
+        })
 
-    pages.insert_one({
-        "url": url,
-        "html": html.decode(),
-        "is_target": is_target
-    })
+    @staticmethod
+    def store_inverted_index(term: str, doc_list: set[str]) -> None:
+        """
+        Stores the inverted index associated with a given term. Essentially,
+        we store a set of documents in which the term occurs.
 
+        We end up with the following schema:
+        {
+            str: set[str],
+            cat: [url1, url2, url3],
+            ...
+        }
 
-def store_inverted_index(term: str, doc_list: list[str]) -> None:
-    """
-    Stores the inverted index associated with a given term. Essentially,
-    we store a list of documents in which the term occurs.
+        Parameters
+        ----------
+        term : str
+            The term whose indices we are storing
+        doc_list : set[str]
+            The set of document URLs in which this term occurs
+        """
+        db = DBCon.get_db()
+        faculty = db.faculty
 
-    We end up with the following schema:
-    {
-        str: list[str],
-        cat: [url1, url2, url3],
-        ...
-    }
+        faculty.insert_one({
+            "term": term,
+            "doc_list": list(doc_list)
+        })
 
-    Parameters
-    ----------
-    term : str
-        The term whose indices we are storing
-    doc_list : list[str]
-        The list of document URLs in which this term occurs
-    """
-    db = DBCon.get_db()
-    faculty = db.faculty
+    @staticmethod
+    def get_targets(num_targets: int) -> Cursor[Page]:
+        """
+        Retrieves a maximum of num_targets target pages. If we don't have that
+        many targets, all of our targets will be returned
 
-    faculty.insert_one({
-        "term": term,
-        "doc_list": doc_list
-    })
+        Parameters
+        ----------
+        num_targets : int
+            The (maximum) number of targets to retrieve
+
+        Returns
+        -------
+        Cursor
+            An iterable object that allows for iteration over the results of a
+            query
+        """
+        db = DBCon.get_db()
+        return db.pages.find({'is_target': True}).limit(num_targets)

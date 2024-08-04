@@ -10,13 +10,13 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 # Download the required NLTK data files
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+nltk.download('omw-1.4', quiet=True)
 
 
-def retrieve_url(url: str) -> BeautifulSoup:
+def retrieve_html(url: str) -> BeautifulSoup:
     """
     Retrieves the HTML of a given URL
 
@@ -59,7 +59,7 @@ def is_target(html: BeautifulSoup) -> bool:
     return faculty is not None
 
 
-def parse(html: BeautifulSoup):
+def parse_html(html: BeautifulSoup) -> list[str]:
     """
     Retrieves a list of URLs parsed from the given page
 
@@ -90,7 +90,7 @@ def parse(html: BeautifulSoup):
     return urls
 
 
-def preprocess_text(text: str) -> str:
+def preprocess_text(text: str) -> list[str]:
     """
     Preprocesses the text by performing stopword removal and lemmatization.
 
@@ -101,8 +101,8 @@ def preprocess_text(text: str) -> str:
 
     Returns
     -------
-    str
-        The preprocessed text as a single string.
+    list[str]
+        The preprocessed text as a list of filtered tokens
     """
 
     # Remove punctuation
@@ -117,12 +117,11 @@ def preprocess_text(text: str) -> str:
         for token in tokens
         if token not in stop_words
     ]
-    processed_text = ' '.join(filtered_tokens)
 
-    return processed_text
+    return filtered_tokens
 
 
-def faculty_data(html: BeautifulSoup) -> list[str]:
+def retrieve_faculty_data(html: BeautifulSoup) -> list[str]:
     """
     Extracts and preprocesses faculty data from HTML.
 
@@ -134,9 +133,9 @@ def faculty_data(html: BeautifulSoup) -> list[str]:
     Returns
     -------
     list[str]
-        List of preprocessed faculty data strings.
+        Every pre-processed token found in the provided HTML
     """
-    doc_text = []
+    all_tokens: list[str] = []
 
     # Area of Search (left and right sides)
     left_column = html.find_all('div', {'class': 'col'})
@@ -144,12 +143,10 @@ def faculty_data(html: BeautifulSoup) -> list[str]:
 
     for elem in left_column:
         text = re.sub(r"[\xa0\n\t]", " ", elem.text)
-        preprocessed_text = preprocess_text(text)
-        doc_text.append(preprocessed_text)
+        all_tokens += preprocess_text(text)
 
     for elem in right_column:
         text = re.sub(r"[\xa0\n\t]", " ", elem.text)
-        preprocessed_text = preprocess_text(text)
-        doc_text.append(preprocessed_text)
+        all_tokens += preprocess_text(text)
 
-    return doc_text
+    return all_tokens
