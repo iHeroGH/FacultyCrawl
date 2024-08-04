@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from .database import DBCon
-from .parser import retrieve_faculty_data, retrieve_html
+from .parser import retrieve_faculty_data, retrieve_soup
 
 
 def index_faculty_content(num_targets: int, n_gram: int = 3) -> None:
@@ -38,10 +38,8 @@ def index_faculty_content(num_targets: int, n_gram: int = 3) -> None:
     # Calculate the indices
     targets = DBCon.get_targets(num_targets)
     for target in targets:
-        url = target['url']
-        # We re-retrieve the HTML rather than get it from MongoDB since we
-        # would rather a BeautifulSoup object anyways
-        tokens = retrieve_faculty_data(retrieve_html(url))
+        url, html = target['url'], target['html']
+        tokens = retrieve_faculty_data(retrieve_soup(html))
 
         for curr_gram in range(1, n_gram + 1):
             terms = get_grams(tokens, curr_gram)

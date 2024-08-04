@@ -1,6 +1,6 @@
 from .database import DBCon
 from .frontier import Frontier
-from .parser import is_target, parse_html, retrieve_html
+from .parser import is_target, parse_html, fetch_html
 
 
 def crawl(frontier: Frontier, num_targets: int):
@@ -23,7 +23,7 @@ def crawl(frontier: Frontier, num_targets: int):
         try:
             url = frontier.next_url()
             links_visited.add(url)
-            html = retrieve_html(url)
+            html = fetch_html(url)
 
             if (target := is_target(html)):
                 targets_found += 1

@@ -1,6 +1,7 @@
 from search_engine.crawler import crawl
 from search_engine.frontier import Frontier
 from search_engine.indexer import index_faculty_content
+from search_engine.ranker import query_user
 
 """
 What still needs to be done:
@@ -22,7 +23,7 @@ def main():
 
     # Whether or not to INDEX. This will retrieve targets from MongoDB,
     # calculate inverted indices for them, and store them to `faculty`
-    _INDEX = True
+    _INDEX = False
     # The number of grams to use (connected strings of terms).
     # "cats love dogs"
     # 1-gram = "cats"
@@ -31,7 +32,9 @@ def main():
     _N_GRAMS = 3
 
     # Whether or not to ask for a user QUERY.
-    _QUERY = False
+    _QUERY = True
+    # The maximum number of results to return for each query
+    _N_RESULTS = 5
     ###########################################################################
 
     # The base CPP URL
@@ -71,7 +74,7 @@ def main():
         index_faculty_content(num_targets, _N_GRAMS)
 
     if _QUERY:
-        pass
+        query_user(_N_RESULTS, _N_GRAMS)
 
 
 if __name__ == '__main__':

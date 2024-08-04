@@ -7,9 +7,27 @@ from pymongo.database import Database
 
 
 class Page(TypedDict):
+    """
+    A TypedDict defining what a Page is
+
+    A Page has a URL (url : str), the associated HTML content (html : str),
+    and whether or not the page belongs to a faculty member (is_target : bool)
+    """
     url: str
     html: str
     is_target: bool
+
+
+class InvertedIndex(TypedDict):
+    """
+    A TypedDict defining what an Inverted Index is
+
+    An Inverted Index has a Term (term : str) and a list of documents in which
+    the term occurs (doc_list : list[str])
+    """
+
+    term: str
+    doc_list: list[str]
 
 
 class DBCon:
@@ -176,6 +194,28 @@ class DBCon:
         })
 
     @staticmethod
+    def get_page(url: str) -> Page:
+        """
+        Retrieves a Page associated with a URL
+
+        Parameters
+        ----------
+        url : str
+            The URL to search for
+
+        Returns
+        -------
+        Page
+            The Page found (a dictionary containing the keys `url`, `html`, and
+            `is_target`), or `{"url": "", "html": "", "is_target": False}` if
+            no Page is found for this URL
+        """
+        db = DBCon.get_db()
+        result = db.pages.find_one({'url': url})
+
+        return result or {"url": "", "html": "", "is_target": False}
+
+    @staticmethod
     def get_targets(num_targets: int) -> Cursor[Page]:
         """
         Retrieves a maximum of num_targets target pages. If we don't have that
@@ -188,9 +228,33 @@ class DBCon:
 
         Returns
         -------
-        Cursor
+        Cursor[Page]
             An iterable object that allows for iteration over the results of a
             query
         """
         db = DBCon.get_db()
         return db.pages.find({'is_target': True}).limit(num_targets)
+
+    @staticmethod
+    def get_inverted_index(term: str) -> InvertedIndex:
+        """
+        Retrieves the indices associated with the given term (ie, the
+        URLs in which the term occurs)
+
+        Parameters
+        ----------
+        term : str
+            The term to search for
+
+        Returns
+        -------
+        InvertedIndex
+            A dictionary containing the keys `term` (which is the term) and
+            `doc_list` (which is the list of documents in which `term` appears)
+            If no indices are found, we return an empty InvertedIndex dict
+            (meaning `{"term": "", "doc_list": []}`)
+        """
+        db = DBCon.get_db()
+        result = db.faculty.find_one({'term': term})
+
+        return result if result else {"term": "", "doc_list": []}

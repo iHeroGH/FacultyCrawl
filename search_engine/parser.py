@@ -16,9 +16,9 @@ nltk.download('wordnet', quiet=True)
 nltk.download('omw-1.4', quiet=True)
 
 
-def retrieve_html(url: str) -> BeautifulSoup:
+def fetch_html(url: str) -> BeautifulSoup:
     """
-    Retrieves the HTML of a given URL
+    Retrieves the HTML of a given URL (requires opening the URL)
 
     Parameters
     ----------
@@ -32,8 +32,21 @@ def retrieve_html(url: str) -> BeautifulSoup:
 
     """
     html = urlopen(url)
-    soup = BeautifulSoup(html.read(), 'html.parser')
-    return soup
+    return retrieve_soup(html.read())
+
+
+def retrieve_soup(html: bytes | str) -> BeautifulSoup:
+    """
+    Retrieves a BeautifulSoup object based on provided HTML, which can be
+    a string of HTML or HTMl retrieved via urlopen
+
+    Parameters
+    ----------
+    html : bytes | str
+        HTML, which is in bytes if retrieved via urllib or a str if retrieved
+        via a MongoDB call
+    """
+    return BeautifulSoup(html, 'html.parser')
 
 
 def is_target(html: BeautifulSoup) -> bool:
