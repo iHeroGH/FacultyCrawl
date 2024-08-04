@@ -4,7 +4,6 @@ from search_engine.indexer import index_faculty_content
 
 """
 What still needs to be done:
-- parse/index faculty data
 - allow for user queury
 """
 
