@@ -1,8 +1,19 @@
 import re
+import string
+import nltk
 from urllib.parse import urljoin
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+#download the required NLTK data files
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 
 
 def retrieve_url(url: str) -> BeautifulSoup:
@@ -82,18 +93,66 @@ def parse(html: BeautifulSoup):
 
     return urls
 
-def faculty_data(html):
+def preprocess_text(text: str) -> str:
+    """
+    Preprocesses the text by performing stopword removal and lemmatization.
 
+    Parameters
+    ----------
+    text : str
+        The text to preprocess.
+
+    Returns
+    -------
+    str
+        The preprocessed text as a single string.
+    """
+   
+    text = text.translate(str.maketrans('', '', string.punctuation))  # Remove punctuation
+    tokens = word_tokenize(text.lower())
+
+    #remove stopwords and perform lemmatization
+    stop_words = set(stopwords.words('english'))
+    lemmatizer = WordNetLemmatizer()
+    filtered_tokens = [
+        lemmatizer.lemmatize(token) 
+        for token in tokens 
+        if token not in stop_words
+    ]
+    processed_text = ' '.join(filtered_tokens)
+
+    return processed_text
+
+
+def faculty_data(html: BeautifulSoup) -> list[str]:
+    """
+    Extracts and preprocesses faculty data from HTML.
+
+    Parameters
+    ----------
+    html : BeautifulSoup
+        The HTML to parse.
+
+    Returns
+    -------
+    list[str]
+        List of preprocessed faculty data strings.
+    """
     doc_text = []
 
-    left_column = html.find_all('div',{'class':'col'})  # left side of area of search
-    right_column = html.find_all('div',{'class':'accolades'})   # right side of area of search
+    left_column = html.find_all('div', {'class': 'col'})  # left side of area of search
+    right_column = html.find_all('div', {'class': 'accolades'})  # right side of area of search
 
     for elem in left_column:
-        doc_text.append(str(re.sub(r"[\xa0\n\t]", " ", elem.text))) 
+        text = re.sub(r"[\xa0\n\t]", " ", elem.text)
+        preprocessed_text = preprocess_text(text)
+        doc_text.append(preprocessed_text)
+
     for elem in right_column:
-       doc_text.append(str(re.sub(r"[\xa0\n\t]", " ", elem.text)))
-    
+        text = re.sub(r"[\xa0\n\t]", " ", elem.text)
+        preprocessed_text = preprocess_text(text)
+        doc_text.append(preprocessed_text)
+
     print([text for text in doc_text])
 
     return doc_text
