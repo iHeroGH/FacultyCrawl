@@ -3,11 +3,6 @@ from search_engine.frontier import Frontier
 from search_engine.indexer import index_faculty_content
 from search_engine.ranker import query_user
 
-"""
-What still needs to be done:
-- allow for user queury
-"""
-
 
 def main():
 
