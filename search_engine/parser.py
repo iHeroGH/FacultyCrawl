@@ -1,15 +1,15 @@
 import re
 import string
-import nltk
 from urllib.parse import urljoin
 from urllib.request import urlopen
 
+import nltk
 from bs4 import BeautifulSoup
-from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
 
-#download the required NLTK data files
+# Download the required NLTK data files
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -93,6 +93,7 @@ def parse(html: BeautifulSoup):
 
     return urls
 
+
 def preprocess_text(text: str) -> str:
     """
     Preprocesses the text by performing stopword removal and lemmatization.
@@ -107,16 +108,17 @@ def preprocess_text(text: str) -> str:
     str
         The preprocessed text as a single string.
     """
-   
-    text = text.translate(str.maketrans('', '', string.punctuation))  # Remove punctuation
+
+    # Remove punctuation
+    text = text.translate(str.maketrans('', '', string.punctuation))
     tokens = word_tokenize(text.lower())
 
-    #remove stopwords and perform lemmatization
+    # Remove stopwords and perform lemmatization
     stop_words = set(stopwords.words('english'))
     lemmatizer = WordNetLemmatizer()
     filtered_tokens = [
-        lemmatizer.lemmatize(token) 
-        for token in tokens 
+        lemmatizer.lemmatize(token)
+        for token in tokens
         if token not in stop_words
     ]
     processed_text = ' '.join(filtered_tokens)
@@ -140,8 +142,9 @@ def faculty_data(html: BeautifulSoup) -> list[str]:
     """
     doc_text = []
 
-    left_column = html.find_all('div', {'class': 'col'})  # left side of area of search
-    right_column = html.find_all('div', {'class': 'accolades'})  # right side of area of search
+    # Area of Search (left and right sides)
+    left_column = html.find_all('div', {'class': 'col'})
+    right_column = html.find_all('div', {'class': 'accolades'})
 
     for elem in left_column:
         text = re.sub(r"[\xa0\n\t]", " ", elem.text)

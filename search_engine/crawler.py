@@ -1,6 +1,6 @@
-from .frontier import Frontier
-from .parser import is_target, parse, retrieve_url, faculty_data
 from .database import store_page
+from .frontier import Frontier
+from .parser import faculty_data, is_target, parse, retrieve_url
 
 
 def crawl(frontier: Frontier, num_targets: int):
